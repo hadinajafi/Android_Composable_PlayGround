@@ -4,8 +4,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -48,16 +46,15 @@ fun OverviewScreen() {
             )
         }
     ) {
-//        TransactionContent(
-//            modifier = Modifier
-//                .padding(it)
-//                .fillMaxWidth(),
-//            transactions = listOf(
-//                Transaction(UUID.randomUUID(), "Title", "description", 203.34F),
-//                Transaction(UUID.randomUUID(), "Title 2", "desc", 20.21F)
-//            )
-//        )
-        TransactionContent(transactions = emptyList(), modifier = Modifier.padding(it))
+        TransactionContent(
+            modifier = Modifier
+                .padding(it)
+                .fillMaxWidth(),
+            transactions = listOf(
+                Transaction(UUID.randomUUID(), "Title", "description", 203.34F),
+                Transaction(UUID.randomUUID(), "Title 2", "desc", 20.21F)
+            )
+        )
     }
 }
 
@@ -67,10 +64,11 @@ private fun TransactionContent(
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier) {
-//        this.items(transactions) { transaction ->
-//            TransactionItem(transaction = transaction)
-//        }
-        item { Text(text = "Hi") }
+        transactions.forEach {
+            item {
+                TransactionItem(transaction = it)
+            }
+        }
     }
 }
 
