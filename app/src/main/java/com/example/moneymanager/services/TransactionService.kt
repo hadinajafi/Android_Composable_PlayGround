@@ -1,15 +1,15 @@
 package com.example.moneymanager.services
 
-import com.example.moneymanager.models.Transaction
+import com.example.moneymanager.models.TransactionDto
 
 class TransactionService {
-    private val transactions: MutableList<Transaction> = mutableListOf()
+    private val transactionDtos: MutableList<TransactionDto> = mutableListOf()
 
-    fun getTransactions(): List<Transaction> {
-        return transactions
+    fun getTransactions(): List<TransactionDto> {
+        return transactionDtos
     }
 
-    fun addTransaction(transaction: Transaction) {
-        transactions.add(transaction)
+    fun addTransaction(transactionDto: TransactionDto) {
+        transactionDtos.add(transactionDto)
     }
 }
