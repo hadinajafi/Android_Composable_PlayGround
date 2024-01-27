@@ -6,11 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
-import android.widget.TableRow
-import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ConstraintSet
-import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.moneymanager.databinding.FragmentHomeBinding
@@ -51,20 +46,6 @@ class HomeFragment : Fragment() {
                 )
             )
         }
-
-        //todo: didn't work
-//        row.updateLayoutParams<ConstraintLayout.LayoutParams> {
-//            startToEnd = binding.root.id
-//            topToTop = binding.root.id
-//            rightToRight = binding.root.id
-//        }
-//        val tableView = binding.homeTableView
-//        val row = TableRow(tableView.context)
-//        val textView = TextView(row.context)
-
-//        textView.text = "Hadi"
-//        row.addView(textView)
-//        tableView.addView(row)
 
 
         return root
