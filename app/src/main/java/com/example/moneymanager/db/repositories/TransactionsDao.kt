@@ -7,7 +7,7 @@ import androidx.room.Query
 import com.example.moneymanager.db.entities.Transaction
 
 @Dao
-interface TransactionRepository {
+interface TransactionsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTransaction(transaction: Transaction)
