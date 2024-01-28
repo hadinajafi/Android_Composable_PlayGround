@@ -12,6 +12,6 @@ interface TransactionsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertTransaction(transaction: Transaction)
 
-    @Query("SELECT * FROM `transactions`")
+    @Query("SELECT * FROM `transactions` LIMIT 50")
     suspend fun getAllTransactions(): List<Transaction>
 }
