@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.room.Room
 import com.example.moneymanager.db.repositories.AppDatabase
 import com.example.moneymanager.ui.home.OverviewScreen
 import com.example.moneymanager.ui.theme.MoneyManagerTheme
@@ -21,11 +20,7 @@ class MoneyManager : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        database = Room.databaseBuilder(
-            this.applicationContext,
-            AppDatabase::class.java,
-            "money_manager_db"
-        ).build()
+        database = AppDatabase.getInstance(this)
 
         setContent {
             MoneyManagerTheme {
