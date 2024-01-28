@@ -3,10 +3,10 @@ package com.example.moneymanager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.material3.MaterialTheme
 import androidx.room.Room
 import com.example.moneymanager.db.repositories.AppDatabase
 import com.example.moneymanager.ui.home.OverviewScreen
+import com.example.moneymanager.ui.theme.MoneyManagerTheme
 
 class MoneyManager : ComponentActivity() {
 
@@ -24,7 +24,7 @@ class MoneyManager : ComponentActivity() {
         ).build()
 
         setContent {
-            MaterialTheme {
+            MoneyManagerTheme {
                 OverviewScreen()
             }
         }
