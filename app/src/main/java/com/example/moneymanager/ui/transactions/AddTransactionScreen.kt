@@ -23,6 +23,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import com.example.moneymanager.MoneyManager
+import com.example.moneymanager.db.entities.Transaction
+import com.example.moneymanager.models.TransactionDto
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -83,8 +89,24 @@ private fun AddTransactionMeta(
             modifier = textFieldModifier,
             shape = Shapes().extraSmall,
             onClick = {
+                saveTransaction(
+                    TransactionDto(
+                        title = title,
+                        description = description,
+                        amount = amount
+                    )
+                )
             }) {
             Text(text = "Save")
         }
+
+        //todo: add cancel button and back button to the header
+    }
+}
+
+private fun saveTransaction(transaction: TransactionDto) {
+    CoroutineScope(Dispatchers.IO).launch {
+        MoneyManager.database.transactionsDao()
+            .insertTransaction(Transaction.fromInternal(transaction))
     }
 }
