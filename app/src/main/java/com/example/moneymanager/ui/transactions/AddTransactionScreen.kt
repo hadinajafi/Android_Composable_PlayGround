@@ -1,4 +1,4 @@
-package com.example.moneymanager.ui.userinput
+package com.example.moneymanager.ui.transactions
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,6 +14,11 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
@@ -49,9 +54,9 @@ private fun AddTransactionMeta(
     val textFieldModifier = Modifier
         .padding(bottom = Dp(2F))
         .fillMaxWidth()
-    var title = ""
-    var description: String?
-    var amount: Float = 0.0F
+    var title by remember { mutableStateOf("") }
+    var description by remember { mutableStateOf("") }
+    var amount by remember { mutableFloatStateOf(0.0F) }
     Column(
         modifier = modifier
             .padding(all = Dp(4F))
@@ -59,20 +64,20 @@ private fun AddTransactionMeta(
     ) {
         TextField(
             modifier = textFieldModifier,
-            value = "",
-            onValueChange = { description = it },
+            value = title,
+            onValueChange = { title = it },
             label = { Text(text = "Title") })
         TextField(
             modifier = textFieldModifier,
-            value = "",
+            value = description,
             onValueChange = { description = it },
             label = { Text(text = "Description") })
         TextField(
             modifier = textFieldModifier,
-            onValueChange = { amount = it.toFloatOrNull() ?: 0.0F },
-            value = "",
-            label = { Text(text = "0.0") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            onValueChange = { amount = it.toFloatOrNull() ?: amount },
+            value = amount.toString(),
+            label = { Text(text = "Amount") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
         )
         Button(
             modifier = textFieldModifier,

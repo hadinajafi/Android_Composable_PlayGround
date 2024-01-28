@@ -20,7 +20,6 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import com.example.moneymanager.models.TransactionDto
 import java.util.UUID
@@ -28,8 +27,7 @@ import java.util.UUID
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-@Preview
-fun OverviewScreen() {
+fun OverviewScreen(onAddTransactionClick: () -> Unit) {
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
         topBar = {
@@ -40,9 +38,7 @@ fun OverviewScreen() {
                     titleContentColor = MaterialTheme.colorScheme.primary
                 ),
                 actions = {
-                    IconButton(onClick = {
-                        //TODO: fix it with navigation
-                    }) {
+                    IconButton(onClick = onAddTransactionClick) {
                         Icon(
                             imageVector = Icons.Filled.Add,
                             contentDescription = "Add new transaction"
@@ -55,8 +51,8 @@ fun OverviewScreen() {
     ) {
         TransactionContent(
             modifier = Modifier
-                .padding(it)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .padding(it),
             transactionDtos = listOf(
                 TransactionDto(UUID.randomUUID(), "Title", "description", 203.34F),
                 TransactionDto(UUID.randomUUID(), "Title 2", "desc", 20.21F)
@@ -97,6 +93,5 @@ fun TransactionItem(
         ) {
             Text(text = transactionDto.title, Modifier.padding(Dp(20F)))
         }
-
     }
 }
