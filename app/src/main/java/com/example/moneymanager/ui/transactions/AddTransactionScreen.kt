@@ -7,22 +7,21 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Shapes
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.example.moneymanager.MoneyManager
 import com.example.moneymanager.db.entities.Transaction
 import com.example.moneymanager.models.TransactionDto
@@ -58,42 +57,57 @@ private fun AddTransactionMeta(
     modifier: Modifier = Modifier
 ) {
     val textFieldModifier = Modifier
-        .padding(bottom = Dp(2F))
+        .padding(bottom = 2.dp)
         .fillMaxWidth()
     var title by remember { mutableStateOf("") }
     var description by remember { mutableStateOf("") }
-    var amount by remember { mutableFloatStateOf(0.0F) }
+    var amount by remember { mutableStateOf("") }
+    var isError by remember { mutableStateOf(false) }
+
     Column(
         modifier = modifier
-            .padding(all = Dp(4F))
+            .padding(all = 4.dp)
             .fillMaxWidth()
     ) {
-        TextField(
+
+        fun isFloat(text: String): Boolean {
+            isError = text.toFloatOrNull() == null
+            return text.toFloatOrNull() != null
+        }
+
+        OutlinedTextField(
             modifier = textFieldModifier,
             value = title,
             onValueChange = { title = it },
-            label = { Text(text = "Title") })
-        TextField(
+            label = { Text(text = "Title") },
+            textStyle = MaterialTheme.typography.titleMedium
+        )
+        OutlinedTextField(
             modifier = textFieldModifier,
             value = description,
             onValueChange = { description = it },
             label = { Text(text = "Description") })
-        TextField(
+        OutlinedTextField(
             modifier = textFieldModifier,
-            onValueChange = { amount = it.toFloatOrNull() ?: amount },
-            value = amount.toString(),
+            onValueChange = { if(isFloat(it)) amount = it },
+            value = amount,
             label = { Text(text = "Amount") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            isError = isError,
+
         )
         Button(
-            modifier = textFieldModifier,
+            modifier = Modifier
+                .padding(bottom = 2.dp)
+                .fillMaxWidth(),
             shape = Shapes().extraSmall,
             onClick = {
+                if (isError) return@Button
                 saveTransaction(
                     TransactionDto(
                         title = title,
                         description = description,
-                        amount = amount
+                        amount = amount.toFloat()
                     )
                 )
             }) {

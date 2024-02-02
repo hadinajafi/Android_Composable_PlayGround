@@ -79,6 +79,7 @@ fun OverviewScreen(
     }
 }
 
+//TODO: move me to a service
 private fun fetchTransactions(): List<TransactionDto> {
     return CoroutineScope(Dispatchers.IO).async {
         MoneyManager.database.transactionsDao().getAllTransactions()
@@ -98,6 +99,39 @@ private fun TransactionContent(
                 TransactionItem(transactionDto = it)
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@RequiresApi(Build.VERSION_CODES.Q)
+@Composable
+@Preview
+fun OverviewScreenPreview(@PreviewParameter(TransactionPreviewProvider::class) transaction: TransactionDto) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "Today's Transactions") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.primary
+                ),
+                actions = {
+                    IconButton(onClick = { }) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = "Add new transaction"
+                        )
+                    }
+                },
+            )
+        }
+    ) {
+        TransactionContent(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(it),
+            transactionDtos = listOf(transaction)
+        )
     }
 }
 
