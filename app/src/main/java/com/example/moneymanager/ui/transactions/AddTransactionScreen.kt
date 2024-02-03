@@ -21,12 +21,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.moneymanager.models.TransactionDto
 import com.example.moneymanager.services.TransactionService
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddTransaction(transactionService: TransactionService) {
+fun AddTransaction(transactionService: TransactionService, navController: NavController) {
     Scaffold(
         topBar = {
             TopAppBar(
@@ -42,7 +44,8 @@ fun AddTransaction(transactionService: TransactionService) {
             modifier = Modifier
                 .padding(it)
                 .fillMaxWidth(),
-            transactionService
+            transactionService,
+            navController
         )
     }
 }
@@ -51,6 +54,7 @@ fun AddTransaction(transactionService: TransactionService) {
 private fun AddTransactionMeta(
     modifier: Modifier = Modifier,
     transactionService: TransactionService,
+    navController: NavController
 ) {
     val textFieldModifier = Modifier
         .padding(bottom = 2.dp)
@@ -106,6 +110,7 @@ private fun AddTransactionMeta(
                         amount = amount.toFloat()
                     )
                 )
+                navController.popBackStack()
             }) {
             Text(text = "Save")
         }

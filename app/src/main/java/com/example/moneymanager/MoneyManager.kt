@@ -32,7 +32,7 @@ class MoneyManager : ComponentActivity() {
                         }, transactions = transactionService.getAllTransactions())
                     }
                     composable("addTransaction") {
-                        AddTransaction(transactionService)
+                        AddTransaction(transactionService, navController)
                     }
                 }
             }

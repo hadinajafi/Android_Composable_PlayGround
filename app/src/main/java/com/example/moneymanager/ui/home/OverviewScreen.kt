@@ -42,7 +42,7 @@ fun OverviewScreen(
     onAddTransactionClick: () -> Unit = {},
     transactions: List<TransactionDto> = listOf()
 ) {
-    val transactions = remember {
+    val transactionsState = remember {
         mutableStateOf(transactions)
     }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
@@ -70,7 +70,7 @@ fun OverviewScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(it),
-            transactionDtos = transactions.value
+            transactionDtos = transactionsState.value
         )
     }
 }
