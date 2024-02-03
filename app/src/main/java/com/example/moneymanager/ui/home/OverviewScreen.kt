@@ -32,12 +32,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
-import com.example.moneymanager.MoneyManager
 import com.example.moneymanager.models.TransactionDto
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.future.asCompletableFuture
 
 
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -45,9 +40,10 @@ import kotlinx.coroutines.future.asCompletableFuture
 @Composable
 fun OverviewScreen(
     onAddTransactionClick: () -> Unit = {},
+    transactions: List<TransactionDto> = listOf()
 ) {
     val transactions = remember {
-        mutableStateOf(fetchTransactions())
+        mutableStateOf(transactions)
     }
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
@@ -77,13 +73,6 @@ fun OverviewScreen(
             transactionDtos = transactions.value
         )
     }
-}
-
-//TODO: move me to a service
-private fun fetchTransactions(): List<TransactionDto> {
-    return CoroutineScope(Dispatchers.IO).async {
-        MoneyManager.database.transactionsDao().getAllTransactions()
-    }.asCompletableFuture().get().map { it.toInternal() }
 }
 
 @RequiresApi(Build.VERSION_CODES.Q)

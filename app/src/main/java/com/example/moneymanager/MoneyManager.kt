@@ -1,26 +1,26 @@
 package com.example.moneymanager
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.annotation.RequiresApi
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.example.moneymanager.db.repositories.AppDatabase
+import com.example.moneymanager.services.TransactionService
 import com.example.moneymanager.ui.home.OverviewScreen
 import com.example.moneymanager.ui.theme.MoneyManagerTheme
 import com.example.moneymanager.ui.transactions.AddTransaction
 
 class MoneyManager : ComponentActivity() {
 
-    companion object {
-        lateinit var database: AppDatabase
-    }
+    private lateinit var transactionService: TransactionService
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        database = AppDatabase.getInstance(this)
+        transactionService = TransactionService(this)
 
         setContent {
             MoneyManagerTheme {
@@ -29,48 +29,13 @@ class MoneyManager : ComponentActivity() {
                     composable("overviewScreen") {
                         OverviewScreen(onAddTransactionClick = {
                             navController.navigate("addTransaction")
-                        })
+                        }, transactions = transactionService.getAllTransactions())
                     }
                     composable("addTransaction") {
-                        AddTransaction()
+                        AddTransaction(transactionService)
                     }
                 }
             }
         }
     }
 }
-
-
-/*
-NavHost(navController, startDestination = "home") {
-    composable("home") {
-        HomeScreen(onDetailsClick = { id ->
-            navController.navigate("details/id=$id?name=hi")
-        }, onAboutClick = {
-            navController.navigate("about")
-        })
-    }
-    composable("about") {
-        AboutScreen(onNavigateUp = {
-            navController.popBackStack()
-        })
-    }
-    composable(
-        "details/id={id}?name={name}",
-        arguments = listOf(navArgument("id") {
-            type = NavType.LongType
-        }, navArgument("name") {
-            type = NavType.StringType
-            nullable = true
-        }),
-    ) { backStackEntry ->
-        val arguments = requireNotNull(backStackEntry.arguments)
-        val id = arguments.getLong("id")
-        val name = arguments.getString("name")
-        DetailsScreen(id, name, onNavigateUp = {
-            navController.popBackStack()
-        })
-    }
-}
-
- */
