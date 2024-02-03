@@ -14,4 +14,7 @@ interface TransactionsDao {
 
     @Query("SELECT * FROM `transactions` LIMIT 50")
     suspend fun getAllTransactions(): List<Transaction>
+
+    @Query("DELETE FROM `transactions` WHERE uuid = :uuid")
+    suspend fun deleteOne(uuid: String)
 }

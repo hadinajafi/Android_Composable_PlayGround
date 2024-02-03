@@ -1,7 +1,6 @@
 package com.example.moneymanager.services
 
 import android.content.Context
-import com.example.moneymanager.MoneyManager
 import com.example.moneymanager.db.entities.Transaction
 import com.example.moneymanager.db.repositories.AppDatabase
 import com.example.moneymanager.models.TransactionDto
@@ -10,6 +9,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.future.asCompletableFuture
 import kotlinx.coroutines.launch
+import java.util.UUID
 
 class TransactionService(context: Context) {
 
@@ -29,6 +29,12 @@ class TransactionService(context: Context) {
         CoroutineScope(Dispatchers.IO).launch {
             database.transactionsDao()
                 .insertTransaction(Transaction.fromInternal(transaction))
+        }
+    }
+
+    fun deleteOne(uuid: String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            database.transactionsDao().deleteOne(uuid)
         }
     }
 }

@@ -29,7 +29,7 @@ class MoneyManager : ComponentActivity() {
                     composable("overviewScreen") {
                         OverviewScreen(onAddTransactionClick = {
                             navController.navigate("addTransaction")
-                        }, transactions = transactionService.getAllTransactions())
+                        }, transactionService = transactionService)
                     }
                     composable("addTransaction") {
                         AddTransaction(transactionService, navController)

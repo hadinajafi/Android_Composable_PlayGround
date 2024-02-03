@@ -11,7 +11,7 @@ data class Transaction(
     @PrimaryKey(autoGenerate = true)
     val id: Long? = null,
     @ColumnInfo(index = true)
-    val uuid: UUID,
+    val uuid: String,
     val title: String,
     val description: String? = null,
     val amount: Float,
