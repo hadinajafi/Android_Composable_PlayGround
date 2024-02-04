@@ -2,30 +2,36 @@ package com.example.moneymanager.ui.home
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Card
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
@@ -40,7 +46,12 @@ fun OverviewScreen(
     onAddTransactionClick: () -> Unit = {},
     transactionService: TransactionService
 ) {
-    val transactionsState = remember { mutableStateOf(transactionService.getAllTransactions()) }
+    val state = remember {
+        mutableStateMapOf<String, TransactionDto>()
+    }
+    transactionService.getAllTransactions().map {
+        state.put(it.uuid, it)
+    }
 
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     Scaffold(
@@ -67,7 +78,8 @@ fun OverviewScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(it),
-            transactions = transactionsState.value,
+            transactions = state,
+            transactionService = transactionService
         )
     }
 }
@@ -75,11 +87,13 @@ fun OverviewScreen(
 @RequiresApi(Build.VERSION_CODES.Q)
 @Composable
 private fun TransactionContent(
-    transactions: List<TransactionDto>,
+    transactions: SnapshotStateMap<String, TransactionDto>,
     modifier: Modifier = Modifier,
+    transactionService: TransactionService,
 ) {
-    println(transactions.size)
     LazyColumn(modifier = modifier) {
+        // TODO: rewrite this with items function
+        //todo: use sticky header to separate dates
         transactions.forEach {
             item {
                 Column(
@@ -87,93 +101,46 @@ private fun TransactionContent(
                         .padding()
                         .fillMaxWidth()
                 ) {
-//                    val deleteSwipeState = rememberDismissState()
-//
-//                    if (deleteSwipeState.isDismissed(DismissDirection.EndToStart)) {
-//                        transactionService.deleteOne(it.uuid)
-//                        println("delete function called")
-////                        transactions.remove(it)
-//                    }
+                    var openDeleteDialog by remember { mutableStateOf(false) }
 
-//                    SwipeToDismiss(
-//                        state = deleteSwipeState,
-//                        directions = setOf(DismissDirection.EndToStart),
-//                        background = {
-//                            val color =
-//                                when {
-//                                    deleteSwipeState.targetValue.equals(DismissValue.DismissedToStart) -> {
-//                                        Color.Red
-//                                    }
-//                                    else -> {
-//                                        Color.White
-//                                    }
-//                                }
-//                            val alignment = Alignment.CenterEnd
-//                            val icon = Icons.Default.Delete
-//
-//                            val scale by animateFloatAsState(
-//                                if (deleteSwipeState.targetValue == DismissValue.DismissedToStart) 0.75f else 1f,
-//                                label = ""
-//                            )
-//
-//                            Box(
-//                                Modifier
-//                                    .fillMaxSize()
-//                                    .background(color)
-//                                    .padding(horizontal = Dp(20f)),
-//                                contentAlignment = alignment
-//                            ) {
-//                                Icon(
-//                                    icon,
-//                                    contentDescription = "Delete Icon",
-//                                    modifier = Modifier.scale(scale)
-//                                )
-//                            }
-//                        },
-//                        dismissContent = {
-//                            Card(
-//                                modifier = Modifier
-//                                    .fillMaxWidth()
-//                                    .padding(
-//                                        bottom = Dp(2F),
-//                                        start = Dp(2F),
-//                                        top = Dp(2F),
-//                                        end = Dp(2F)
-//                                    ),
-//                                border = BorderStroke(width = Dp(2F), color = Color.Gray),
-//                                shape = CardDefaults.elevatedShape,
-//                            ) {
-//
-//                                Text(
-//                                    text = it.title,
-//                                    modifier = Modifier.padding(Dp(20F)),
-//                                    fontWeight = FontWeight.Bold,
-//                                    fontSize = TextUnit(18F, TextUnitType.Sp)
-//                                )
-//                                Text(
-//                                    text = it.description ?: "",
-//                                    Modifier.padding(start = 20.dp, bottom = 10.dp)
-//                                )
-//                            }
-//                        }
-//                    )
+                    if (openDeleteDialog) {
+                        AlertDialog(
+                            onDismissRequest = { openDeleteDialog = false },
+                            confirmButton = {
+                                TextButton(onClick = { openDeleteDialog = false }) {
+                                    Text(text = "Cancel")
+                                }
+                                TextButton(onClick = {
+                                    openDeleteDialog = false
+                                    transactionService.deleteOne(it.value.uuid)
+                                    transactions.remove(it.key)
+                                }) {
+                                    Text(text = "Delete")
+                                }
+                            },
+                            title = { Text(text = "Confirm Delete") },
+                            text = { Text(text = "Are you sure you want to delete transaction: ${it.value.title} ?") },
+                            icon = { Icons.Default.Delete })
+                    }
 
-                    Card(
+                    ElevatedCard(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(bottom = Dp(2F), start = Dp(2F), top = Dp(2F), end = Dp(2F)),
-                        border = BorderStroke(width = Dp(2F), color = Color.Gray),
-                        shape = CardDefaults.elevatedShape,
+                            .padding(bottom = 2.dp, start = 2.dp, top = 2.dp, end = 2.dp)
+                            .pointerInput(Unit) {
+                                detectTapGestures(onLongPress = { openDeleteDialog = true })
+                            },
+                        elevation = CardDefaults.cardElevation(1.dp)
                     ) {
 
                         Text(
-                            text = it.title,
-                            modifier = Modifier.padding(Dp(20F)),
+                            text = it.value.title,
+                            modifier = Modifier.padding(20.dp),
                             fontWeight = FontWeight.Bold,
                             fontSize = TextUnit(18F, TextUnitType.Sp)
                         )
                         Text(
-                            text = it.description ?: "",
+                            text = it.value.description ?: "",
                             Modifier.padding(start = 20.dp, bottom = 10.dp)
                         )
                     }
