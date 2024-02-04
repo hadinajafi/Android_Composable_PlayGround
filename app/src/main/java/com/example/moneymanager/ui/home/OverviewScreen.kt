@@ -3,9 +3,13 @@ package com.example.moneymanager.ui.home
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.gestures.detectTapGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -29,14 +33,21 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.example.moneymanager.models.TransactionDto
 import com.example.moneymanager.services.TransactionService
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 
 @RequiresApi(Build.VERSION_CODES.Q)
@@ -148,4 +159,150 @@ private fun TransactionContent(
             }
         }
     }
+}
+
+@RequiresApi(Build.VERSION_CODES.Q)
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+@Preview
+private fun OverviewScreenPreview() {
+
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "Today's Transactions") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.primary
+                ),
+                actions = {
+                    IconButton(onClick = { }) {
+                        Icon(
+                            imageVector = Icons.Filled.Add,
+                            contentDescription = "Add new transaction"
+                        )
+                    }
+                },
+                scrollBehavior = scrollBehavior
+            )
+        }
+    ) {
+        TransactionContentPreview(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(it),
+        )
+    }
+}
+
+@Composable
+@Preview
+private fun TransactionContentPreview(
+    modifier: Modifier = Modifier,
+    transactions: List<TransactionDto> = listOf(
+        TransactionDto(
+            title = "Title",
+            description = "Something",
+            amount = 20F,
+            createdAt = Instant.now().epochSecond,
+            updatedAt = Instant.now().epochSecond
+        ),
+        TransactionDto(
+            title = "A very very very very long title that I could Title",
+            description = "A very very very very long description that I could think of to break the UI",
+            amount = 20F,
+            createdAt = Instant.now().epochSecond,
+            updatedAt = Instant.now().epochSecond
+        )
+    )
+) {
+    LazyColumn(modifier = modifier) {
+        transactions.forEach {
+            item {
+                Column(
+                    modifier = Modifier
+                        .padding()
+                        .fillMaxWidth()
+                ) {
+                    ElevatedCard(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 2.dp, start = 2.dp, top = 2.dp, end = 2.dp),
+                        elevation = CardDefaults.cardElevation(1.dp)
+                    ) {
+                        Column(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = it.title,
+                                    modifier = Modifier
+                                        .padding(20.dp)
+                                        .width(170.dp),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = TextUnit(18F, TextUnitType.Sp),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                                Text(
+                                    text = LocalDateTime.ofInstant(
+                                        Instant.ofEpochSecond(it.updatedAt),
+                                        ZoneId.of("UTC")
+                                    ).format(
+                                        DateTimeFormatter.ISO_ORDINAL_DATE
+                                    ) + " - " + LocalDateTime.ofInstant(
+                                        Instant.ofEpochSecond(it.updatedAt), //todo: apply the designs to the actual code
+                                        ZoneId.of("UTC")
+                                    ).format(
+                                        DateTimeFormatter.ISO_TIME
+                                    ), modifier = Modifier.padding(20.dp)
+                                )
+                            }
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = it.description ?: "",
+                                    modifier = Modifier
+                                        .padding(start = 20.dp, bottom = 10.dp, end = 10.dp)
+                                        .width(250.dp),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                Text(
+                                    text = it.amount.toString(),
+                                    modifier = Modifier.wrapContentWidth(Alignment.End)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun DeleteAlertPreview() {
+    AlertDialog(
+        onDismissRequest = {},
+        confirmButton = {
+            TextButton(onClick = {}) {
+                Text(text = "Cancel")
+            }
+            TextButton(onClick = {
+
+            }) {
+                Text(text = "Delete")
+            }
+        },
+        title = { Text(text = "Confirm Delete") },
+        text = { Text(text = "Are you sure you want to delete transaction: TransactionTitle ?") },
+        icon = { Icons.Default.Delete })
 }

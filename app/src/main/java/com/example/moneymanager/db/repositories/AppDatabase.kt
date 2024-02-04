@@ -10,7 +10,7 @@ import com.example.moneymanager.db.entities.Transaction
 private const val dbName: String = "money_manager_db"
 private var instance: AppDatabase? = null
 
-@Database(entities = [Transaction::class], version = 4)
+@Database(entities = [Transaction::class], version = 5)
 abstract class AppDatabase : RoomDatabase() {
 
     companion object {

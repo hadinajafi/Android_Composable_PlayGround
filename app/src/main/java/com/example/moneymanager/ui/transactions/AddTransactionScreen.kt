@@ -21,10 +21,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.moneymanager.models.TransactionDto
 import com.example.moneymanager.services.TransactionService
+import java.time.Instant
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -80,7 +82,8 @@ private fun AddTransactionMeta(
             value = title,
             onValueChange = { title = it },
             label = { Text(text = "Title") },
-            textStyle = MaterialTheme.typography.titleMedium
+            textStyle = MaterialTheme.typography.titleMedium,
+            singleLine = true,
         )
         OutlinedTextField(
             modifier = textFieldModifier,
@@ -107,7 +110,9 @@ private fun AddTransactionMeta(
                     TransactionDto(
                         title = title,
                         description = description,
-                        amount = amount.toFloat()
+                        amount = amount.toFloat(),
+                        createdAt = Instant.now().epochSecond,
+                        updatedAt = Instant.now().epochSecond,
                     )
                 )
                 navController.popBackStack()
@@ -119,5 +124,31 @@ private fun AddTransactionMeta(
         }, modifier = Modifier.fillMaxWidth(), shape = Shapes().extraSmall) {
             Text(text = "Cancel")
         }
+    }
+}
+
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+@Preview
+private fun AddTransactionPreview(transactionService: TransactionService, navController: NavController) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "Add New Transaction") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    titleContentColor = MaterialTheme.colorScheme.primary
+                )
+            )
+        },
+    ) {
+        AddTransactionMeta(
+            modifier = Modifier
+                .padding(it)
+                .fillMaxWidth(),
+            transactionService,
+            navController
+        )
     }
 }
