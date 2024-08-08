@@ -143,17 +143,55 @@ private fun TransactionContent(
                             },
                         elevation = CardDefaults.cardElevation(1.dp)
                     ) {
-
-                        Text(
-                            text = it.value.title,
-                            modifier = Modifier.padding(20.dp),
-                            fontWeight = FontWeight.Bold,
-                            fontSize = TextUnit(18F, TextUnitType.Sp)
-                        )
-                        Text(
-                            text = it.value.description ?: "",
-                            Modifier.padding(start = 20.dp, bottom = 10.dp)
-                        )
+                        Column(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = it.value.title,
+                                    modifier = Modifier
+                                        .padding(20.dp)
+                                        .width(170.dp),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = TextUnit(18F, TextUnitType.Sp),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                )
+                                Text(
+                                    text = LocalDateTime.ofInstant(
+                                        Instant.ofEpochSecond(it.value.updatedAt),
+                                        ZoneId.of("UTC")
+                                    ).format(
+                                        DateTimeFormatter.ISO_ORDINAL_DATE
+                                    ) + " - " + LocalDateTime.ofInstant(
+                                        Instant.ofEpochSecond(it.value.updatedAt), //todo: apply the designs to the actual code
+                                        ZoneId.of("UTC")
+                                    ).format(
+                                        DateTimeFormatter.ISO_TIME
+                                    ), modifier = Modifier.padding(20.dp)
+                                )
+                            }
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(10.dp),
+                                modifier = Modifier.fillMaxWidth()
+                            ) {
+                                Text(
+                                    text = it.value.description ?: "",
+                                    modifier = Modifier
+                                        .padding(start = 20.dp, bottom = 10.dp, end = 10.dp)
+                                        .width(250.dp),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis
+                                )
+                                Text(
+                                    text = it.value.amount.toString(),
+                                    modifier = Modifier.wrapContentWidth(Alignment.End)
+                                )
+                            }
+                        }
                     }
                 }
             }

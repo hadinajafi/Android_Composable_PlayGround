@@ -92,8 +92,8 @@ private fun AddTransactionMeta(
             label = { Text(text = "Description") })
         OutlinedTextField(
             modifier = textFieldModifier,
-            onValueChange = { if (isFloat(it)) amount = it },
-            value = amount,
+            onValueChange = { if (isFloat(it)) amount = it.trim() },
+            value = amount.trim(),
             label = { Text(text = "Amount") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             isError = isError,
