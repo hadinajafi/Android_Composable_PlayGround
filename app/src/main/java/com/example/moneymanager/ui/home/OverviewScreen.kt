@@ -167,7 +167,7 @@ private fun TransactionContent(
                                     ).format(
                                         DateTimeFormatter.ISO_ORDINAL_DATE
                                     ) + " - " + LocalDateTime.ofInstant(
-                                        Instant.ofEpochSecond(it.value.updatedAt), //todo: apply the designs to the actual code
+                                        Instant.ofEpochSecond(it.value.updatedAt), //todo: fix the date alignment if it's too long
                                         ZoneId.of("UTC")
                                     ).format(
                                         DateTimeFormatter.ISO_TIME
@@ -293,7 +293,7 @@ private fun TransactionContentPreview(
                                     ).format(
                                         DateTimeFormatter.ISO_ORDINAL_DATE
                                     ) + " - " + LocalDateTime.ofInstant(
-                                        Instant.ofEpochSecond(it.updatedAt), //todo: apply the designs to the actual code
+                                        Instant.ofEpochSecond(it.updatedAt),
                                         ZoneId.of("UTC")
                                     ).format(
                                         DateTimeFormatter.ISO_TIME
